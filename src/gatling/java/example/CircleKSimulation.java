@@ -1,6 +1,7 @@
 package example;
 
 import io.gatling.javaapi.core.Assertion;
+import io.gatling.javaapi.core.FeederBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
@@ -12,6 +13,18 @@ import static example.endpoints.ApiEndpoints.*;
 import static example.endpoints.WebsiteEndpoints.*;
 
 public class CircleKSimulation extends Simulation {
+
+  private record Product(
+      int id,
+      String name,
+      String color,
+      String price,
+      int quantity,
+      String imageSrc,
+      String imageAlt) {
+  }
+
+  private static final FeederBuilder<Object> usersFeeder = jsonFile("data/users_dev.json").circular();
 
   // Load VU count from system properties
   // Reference: https://docs.gatling.io/guides/passing-parameters/
@@ -31,6 +44,10 @@ public class CircleKSimulation extends Simulation {
       session,
       exec(session -> session.set("pageNumber", "0")),
       exec(session -> session.set("searchKey", "")),
+      products,
+      loginPage,
+      feed(usersFeeder),
+      login,
       products);
 
   // Define injection profile and execute the test
