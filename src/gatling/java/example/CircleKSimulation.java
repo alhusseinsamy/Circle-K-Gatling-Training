@@ -28,7 +28,10 @@ public class CircleKSimulation extends Simulation {
   // Reference: https://docs.gatling.io/reference/script/core/scenario/
   private static final ScenarioBuilder scenario = scenario("Scenario").exec(
       homepage,
-      session);
+      session,
+      exec(session -> session.set("pageNumber", "0")),
+      exec(session -> session.set("searchKey", "")),
+      products);
 
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
