@@ -9,6 +9,13 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static example.endpoints.ApiEndpoints.*;
 import static example.endpoints.WebsiteEndpoints.*;
 
@@ -23,6 +30,8 @@ public class CircleKSimulation extends Simulation {
       String imageSrc,
       String imageAlt) {
   }
+
+  private static final ObjectMapper mapper = new ObjectMapper();
 
   private static final FeederBuilder<Object> usersFeeder = jsonFile("data/users_dev.json").circular();
 
@@ -48,7 +57,27 @@ public class CircleKSimulation extends Simulation {
       loginPage,
       feed(usersFeeder),
       login,
-      products);
+      products,
+      exec(session -> {
+        try {
+          List<Product> products = mapper.readValue(
+              session.getString("Products"), new TypeReference<List<Product>>() {
+              });
+
+          Random rand = new Random();
+          Product randomProduct = products.get(rand.nextInt(products.size()));
+          List<Product> cartItems = new ArrayList<>();
+          cartItems.add(randomProduct);
+
+          // Serialize updated cart list back to session
+          String cartItemsJsonString = mapper.writeValueAsString(cartItems);
+          return session.set("CartItems", cartItemsJsonString);
+
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }),
+      addToCart);
 
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
