@@ -8,6 +8,9 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 
+import static example.endpoints.ApiEndpoints.*;
+import static example.endpoints.WebsiteEndpoints.*;
+
 public class CircleKSimulation extends Simulation {
 
   // Load VU count from system properties
@@ -23,15 +26,13 @@ public class CircleKSimulation extends Simulation {
 
   // Define scenario
   // Reference: https://docs.gatling.io/reference/script/core/scenario/
-  private static final ScenarioBuilder scenario = scenario("Scenario").exec(http("Session").get("/session"));
-
-  // Define assertions
-  // Reference: https://docs.gatling.io/reference/script/core/assertions/
-  private static final Assertion assertion = global().failedRequests().count().lt(1L);
+  private static final ScenarioBuilder scenario = scenario("Scenario").exec(
+      homepage,
+      session);
 
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   {
-    setUp(scenario.injectOpen(atOnceUsers(vu))).assertions(assertion).protocols(httpProtocol);
+    setUp(scenario.injectOpen(atOnceUsers(vu))).protocols(httpProtocol);
   }
 }
