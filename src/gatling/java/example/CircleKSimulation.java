@@ -77,7 +77,8 @@ public class CircleKSimulation extends Simulation {
           throw new RuntimeException(e);
         }
       }),
-      addToCart);
+      addToCart,
+      checkout);
 
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
