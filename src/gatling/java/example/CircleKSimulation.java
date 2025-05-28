@@ -28,7 +28,7 @@ public class CircleKSimulation extends Simulation {
 
   // Define scenario
   // Reference: https://docs.gatling.io/reference/script/core/scenario/
-  private static final ScenarioBuilder scenario = scenario("Scenario").exec(
+  private static final ScenarioBuilder scenario1 = scenario("Scenario").exec(
       homeAnonymous,
       // pause(5, 15),
       authenticate,
@@ -59,6 +59,6 @@ public class CircleKSimulation extends Simulation {
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   {
-    setUp(injectionProfile(scenario)).assertions(getAssertions()).protocols(httpProtocol);
+    setUp(injectionProfile(scenario1)).assertions(getAssertions()).protocols(httpProtocol);
   }
 }
