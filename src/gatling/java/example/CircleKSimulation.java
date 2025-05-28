@@ -37,7 +37,7 @@ public class CircleKSimulation extends Simulation {
       buy);
 
   static final List<Assertion> assertions = List.of(
-      // global().responseTime().percentile(90.0).lt(500),
+      global().responseTime().percentile(90.0).lt(500),
       global().failedRequests().percent().lt(5.0));
 
   static final PopulationBuilder injectionProfile(ScenarioBuilder scn) {
@@ -48,9 +48,17 @@ public class CircleKSimulation extends Simulation {
     };
   }
 
+  static final List<Assertion> getAssertions() {
+    return switch (testType) {
+      case "stress" -> assertions;
+      case "smoke" -> List.of(global().failedRequests().count().lt(1L));
+      default -> assertions;
+    };
+  }
+
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   {
-    setUp(injectionProfile(scenario)).assertions(assertions).protocols(httpProtocol);
+    setUp(injectionProfile(scenario)).assertions(getAssertions()).protocols(httpProtocol);
   }
 }
