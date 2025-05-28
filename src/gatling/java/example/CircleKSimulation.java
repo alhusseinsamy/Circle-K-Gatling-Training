@@ -9,6 +9,8 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 
+import java.util.List;
+
 import static example.groups.ScenarioGroups.*;
 
 public class CircleKSimulation extends Simulation {
@@ -36,9 +38,13 @@ public class CircleKSimulation extends Simulation {
       // pause(5, 15),
       buy);
 
+  static final List<Assertion> assertions = List.of(
+      global().responseTime().percentile(90.0).lt(500),
+      global().failedRequests().percent().lt(5.0));
+
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   {
-    setUp(scenario.injectOpen(atOnceUsers(vu))).protocols(httpProtocol);
+    setUp(scenario.injectOpen(atOnceUsers(vu))).assertions(assertions).protocols(httpProtocol);
   }
 }
