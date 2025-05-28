@@ -17,6 +17,8 @@ public class CircleKSimulation extends Simulation {
   // Reference: https://docs.gatling.io/guides/passing-parameters/
   private static final int vu = Integer.getInteger("vu", 1);
 
+  private static final String testType = System.getProperty("testType", "smoke");
+
   // Define HTTP configuration
   // Reference: https://docs.gatling.io/reference/script/protocols/http/protocol/
   private static final HttpProtocolBuilder httpProtocol = http.baseUrl("https://api-ecomm.gatling.io")
